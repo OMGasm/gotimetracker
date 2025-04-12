@@ -4,7 +4,6 @@ import (
 	"log/slog"
 	"maps"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"example.com/gotimetracker/x"
@@ -22,14 +21,14 @@ type Tracker struct {
 }
 
 func New(x *x.X) *Tracker {
-	t := &Tracker{
-		interval: 1 * time.Second,
-		windows:  make(map[string]time.Time),
-		close:    make(chan bool),
-		x:        x,
-	}
+	t := new(Tracker)
+	t.interval = 1 * time.Second
+	t.timer = *time.NewTicker(1 * time.Second)
+	t.windows = make(map[string]time.Time)
+	t.close = make(chan bool)
+	t.x = x
 
-	go t.Start()
+	// go t.loop()
 	return t
 }
 
@@ -72,7 +71,7 @@ func (self *Tracker) Close() {
 }
 
 func (self *Tracker) Start() {
-	self.timer.Reset(self.interval)
+	// self.timer.Reset(self.interval)
 }
 
 func (self *Tracker) Stop() {

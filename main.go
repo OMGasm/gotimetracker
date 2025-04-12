@@ -1,26 +1,31 @@
 package main
 
-import "log/slog"
-import "github.com/jezek/xgb"
-import "github.com/jezek/xgb/xproto"
-import "example.com/gotimetracker/x"
+import (
+	"fmt"
+
+	"example.com/gotimetracker/tracker"
+	"example.com/gotimetracker/x"
+	"github.com/jezek/xgb/xproto"
+)
 
 var activeAtom, nameAtom *xproto.InternAtomReply
 
 func main() {
 	X, err := x.Init()
+	if err != nil {
+		return
+	}
 	defer X.Close()
+	tracker := tracker.New(X)
+	tracker.Start()
 
-	reply, err := X.Prop(X.Atoms.Active.Atom, X.Root())
-	if err != nil {
-		slog.Error("error?", "err", err)
-	}
-	windowId := xproto.Window(xgb.Get32(reply.Value))
-	slog.Info("Active window id", "id", windowId)
+	for {
+		fmt.Print("\f")
+		foo := tracker.Entries()
 
-	reply, err = X.Prop(X.Atoms.WindowName.Atom, windowId)
-	if err != nil {
-		slog.Error("error?", "err", err)
+		for w, t := range foo {
+			h, m, s := t.Clock()
+			fmt.Printf("%s: %02d:%02d:%02d\n", w, h, m, s)
+		}
 	}
-	slog.Info("Active window name", "name", string(reply.Value))
 }
