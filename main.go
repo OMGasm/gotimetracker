@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"example.com/gotimetracker/tracker"
 	"example.com/gotimetracker/x"
@@ -25,7 +26,8 @@ func main() {
 
 		for w, t := range foo {
 			h, m, s := t.Clock()
-			fmt.Printf("%s: %02d:%02d:%02d\n", w, h, m, s)
+			fmt.Printf("[%02d:%02d:%02d] %s\n", h, m, s, w)
 		}
+		time.Sleep(1 * time.Second)
 	}
 }
