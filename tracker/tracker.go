@@ -13,7 +13,7 @@ import (
 
 type Tracker struct {
 	interval time.Duration
-	timer    time.Ticker
+	timer    *time.Ticker
 	wmx      sync.Mutex
 	windows  map[string]time.Time
 	close    chan bool
@@ -23,12 +23,12 @@ type Tracker struct {
 func New(x *x.X) *Tracker {
 	t := new(Tracker)
 	t.interval = 1 * time.Second
-	t.timer = *time.NewTicker(1 * time.Second)
+	t.timer = time.NewTicker(1 * time.Second)
 	t.windows = make(map[string]time.Time)
 	t.close = make(chan bool)
 	t.x = x
 
-	// go t.loop()
+	go t.loop()
 	return t
 }
 
@@ -40,12 +40,13 @@ func (self *Tracker) loop() {
 		case <-self.timer.C:
 			wprop, err := self.x.Prop(self.x.Atoms.Active.Atom, self.x.Root())
 			if err != nil {
-				slog.Error("Error", "error", err)
+				slog.Error("Error", "window id", err)
 				continue
 			}
 			windowId := xproto.Window(xgb.Get32(wprop.Value))
 			wnProp, err := self.x.Prop(self.x.Atoms.WindowName.Atom, windowId)
 			if err != nil {
+				slog.Error("Error", "window name", err)
 			}
 			windowName := string(wnProp.Value)
 			{
@@ -71,7 +72,7 @@ func (self *Tracker) Close() {
 }
 
 func (self *Tracker) Start() {
-	// self.timer.Reset(self.interval)
+	self.timer.Reset(self.interval)
 }
 
 func (self *Tracker) Stop() {
