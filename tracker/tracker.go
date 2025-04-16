@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"example.com/gotimetracker/x"
+	"github.com/OMGasm/gotimetracker/x"
 	"github.com/jezek/xgb"
 	"github.com/jezek/xgb/xproto"
 )

@@ -1,4 +1,4 @@
-module example.com/gotimetracker
+module github.com/OMGasm/gotimetracker
 
 go 1.23
 

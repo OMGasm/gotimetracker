@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"example.com/gotimetracker/tracker"
-	"example.com/gotimetracker/x"
+	"github.com/OMGasm/gotimetracker/tracker"
+	"github.com/OMGasm/gotimetracker/x"
 	"github.com/jezek/xgb/xproto"
 )
 
